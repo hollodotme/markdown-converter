@@ -1,0 +1,28 @@
+<phpunit
+        bootstrap="../tests/bootstrap.php"
+        verbose="true"
+        beStrictAboutOutputDuringTests="true"
+        colors="true"
+        convertErrorsToExceptions="true"
+        convertNoticesToExceptions="true"
+        convertWarningsToExceptions="true">
+    <testsuites>
+        <testsuite name="MarkdownConverter">
+            <directory suffix="Test.php">../tests/Unit</directory>
+        </testsuite>
+    </testsuites>
+    <filter>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">../src</directory>
+        </whitelist>
+    </filter>
+    <listeners>
+        <listener class="hollodotme\PHPUnit\TestListeners\TestDox\Markdown">
+            <arguments>
+                <string>Development</string>
+                <string>docs/TestDox.md</string>
+                <string>hollodotme\Markdown\Tests</string>
+            </arguments>
+        </listener>
+    </listeners>
+</phpunit>
