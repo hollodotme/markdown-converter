@@ -1,7 +1,7 @@
-[![Build Status](https://travis-ci.org/hollodotme/markdown-filter.svg?branch=master)](https://travis-ci.org/hollodotme/markdown-filter)
-[![Latest Stable Version](https://poser.pugx.org/hollodotme/markdown-filter/v/stable)](https://packagist.org/packages/hollodotme/markdown-filter) 
-[![Total Downloads](https://poser.pugx.org/hollodotme/markdown-filter/downloads)](https://packagist.org/packages/hollodotme/markdown-filter) 
-[![Coverage Status](https://coveralls.io/repos/github/hollodotme/markdown-filter/badge.svg?branch=master)](https://coveralls.io/github/hollodotme/markdown-filter?branch=master)
+[![Build Status](https://travis-ci.org/hollodotme/markdown-converter.svg?branch=master)](https://travis-ci.org/hollodotme/markdown-converter)
+[![Latest Stable Version](https://poser.pugx.org/hollodotme/markdown-converter/v/stable)](https://packagist.org/packages/hollodotme/markdown-converter) 
+[![Total Downloads](https://poser.pugx.org/hollodotme/markdown-converter/downloads)](https://packagist.org/packages/hollodotme/markdown-converter) 
+[![Coverage Status](https://coveralls.io/repos/github/hollodotme/markdown-converter/badge.svg?branch=master)](https://coveralls.io/github/hollodotme/markdown-converter?branch=master)
 
 # Markdown Converter
 
