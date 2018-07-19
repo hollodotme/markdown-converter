@@ -11,4 +11,6 @@ abstract class Element
 	public const SORTED_LIST_ITEM   = 'sorted list item';
 
 	public const BLOCKQUOTE         = 'blockquote';
+
+	public const HORIZONTAL_RULE    = 'horizontal rule';
 }

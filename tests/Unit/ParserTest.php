@@ -3,7 +3,9 @@
 namespace hollodotme\Markdown\Tests\Unit;
 
 use hollodotme\Markdown\Elements\Blockquote;
+use hollodotme\Markdown\Elements\Element;
 use hollodotme\Markdown\Elements\Header;
+use hollodotme\Markdown\Elements\HorizontalRule;
 use hollodotme\Markdown\Elements\SortedListItem;
 use hollodotme\Markdown\Elements\UnsortedListItem;
 use hollodotme\Markdown\Interfaces\ParsesMarkdown;
@@ -113,6 +115,7 @@ final class ParserTest extends TestCase
 	public function unsortedListLineProvider() : array
 	{
 		return [
+			# "*" as list indicator
 			[
 				'line'                => '* List Item Level 1',
 				'expectedListElement' => new UnsortedListItem( 'List Item Level 1', 1 ),
@@ -140,6 +143,35 @@ final class ParserTest extends TestCase
 			[
 				'line'                => ' * List * Item Level 1 ',
 				'expectedListElement' => new UnsortedListItem( 'List * Item Level 1', 1 ),
+			],
+			# "-" as list indicator
+			[
+				'line'                => '- List Item Level 1',
+				'expectedListElement' => new UnsortedListItem( 'List Item Level 1', 1 ),
+			],
+			[
+				'line'                => ' - List Item Level 1',
+				'expectedListElement' => new UnsortedListItem( 'List Item Level 1', 1 ),
+			],
+			[
+				'line'                => '  - List Item Level 2',
+				'expectedListElement' => new UnsortedListItem( 'List Item Level 2', 2 ),
+			],
+			[
+				'line'                => '   - List Item Level 2',
+				'expectedListElement' => new UnsortedListItem( 'List Item Level 2', 2 ),
+			],
+			[
+				'line'                => '    - List Item Level 3',
+				'expectedListElement' => new UnsortedListItem( 'List Item Level 3', 3 ),
+			],
+			[
+				'line'                => '     - List Item Level 3',
+				'expectedListElement' => new UnsortedListItem( 'List Item Level 3', 3 ),
+			],
+			[
+				'line'                => ' - List - Item Level 1 ',
+				'expectedListElement' => new UnsortedListItem( 'List - Item Level 1', 1 ),
 			],
 		];
 	}
@@ -239,6 +271,40 @@ final class ParserTest extends TestCase
 			[
 				'line'                      => '> >Blockquote Level 1 ',
 				'expectedBlockquoteElement' => new Blockquote( '>Blockquote Level 1', 1 ),
+			],
+		];
+	}
+
+	/**
+	 * @param string $line
+	 *
+	 * @throws \PHPUnit\Framework\ExpectationFailedException
+	 * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
+	 *
+	 * @dataProvider horizontalRuleLineProvider
+	 */
+	public function testCanGetHorizontalRule( string $line ) : void
+	{
+		$elements = $this->parser->getElements( $line );
+
+		$hr = iterator_to_array( $elements )[0];
+
+		$this->assertInstanceOf( HorizontalRule::class, $hr );
+		$this->assertSame( Element::HORIZONTAL_RULE, $hr->getName() );
+		$this->assertFalse( $hr->isMultiline() );
+	}
+
+	public function horizontalRuleLineProvider() : array
+	{
+		return [
+			[
+				'line' => '---',
+			],
+			[
+				'line' => '***',
+			],
+			[
+				'line' => '___',
 			],
 		];
 	}

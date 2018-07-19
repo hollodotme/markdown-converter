@@ -5,6 +5,7 @@ namespace hollodotme\Markdown;
 use Generator;
 use hollodotme\Markdown\Elements\Blockquote;
 use hollodotme\Markdown\Elements\Header;
+use hollodotme\Markdown\Elements\HorizontalRule;
 use hollodotme\Markdown\Elements\SortedListItem;
 use hollodotme\Markdown\Elements\UnsortedListItem;
 use hollodotme\Markdown\Interfaces\ParsesMarkdown;
@@ -29,6 +30,7 @@ final class Parser implements ParsesMarkdown
 		$elements[] = $this->getUnsortedListItem( $line );
 		$elements[] = $this->getSortedListItem( $line );
 		$elements[] = $this->getBlockquote( $line );
+		$elements[] = $this->getHorizontalRule( $line );
 
 		yield from array_values( array_filter( $elements ) );
 	}
@@ -48,7 +50,7 @@ final class Parser implements ParsesMarkdown
 
 	private function getUnsortedListItem( string $line ) : ?UnsortedListItem
 	{
-		if ( !preg_match( '#^(?:(\s+)?)\*\s+(.+)#', $line, $matches ) )
+		if ( !preg_match( '#^(?:(\s+)?)[*-]\s+(.+)#', $line, $matches ) )
 		{
 			return null;
 		}
@@ -83,5 +85,15 @@ final class Parser implements ParsesMarkdown
 		$contents    = trim( $matches[2] );
 
 		return new Blockquote( $contents, $indentLevel );
+	}
+
+	private function getHorizontalRule( string $line ) : ?HorizontalRule
+	{
+		if ( !preg_match( '#^\s*[-*_]{3,}\s*$#', $line ) )
+		{
+			return null;
+		}
+
+		return new HorizontalRule();
 	}
 }
