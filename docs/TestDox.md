@@ -1,6 +1,6 @@
 💚 Passed | 💔 Error | 💔 Failure | 🧡 Warning | 💛 Risky | 💙 Incomplete | 💜 Skipped
 
-# Test suite: /Users/hollodotme/Sites/hollodotme/markdown-converter/tests
+# Test suite: MarkdownConverter
 
 * Environment: `Development`  
 * Base namespace: `hollodotme\Markdown\Tests`  
@@ -14,4 +14,4 @@
 
 ---
 
-Report created at 2018-07-18 21:22:27 (UTC)
+Report created at 2018-07-19 18:24:43 (UTC)
