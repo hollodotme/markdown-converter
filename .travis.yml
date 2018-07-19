@@ -29,7 +29,7 @@ before_script:
 
 script:
  - php vendor/bin/phpunit.phar -c build/ --coverage-clover build/logs/clover.xml
- - php vendor/bin/phpstan.phar -l max src/
+ - php vendor/bin/phpstan.phar analyse -l max src/
 
 after_success:
  - travis_retry php vendor/bin/coveralls.phar -v --exclude-no-stmt
