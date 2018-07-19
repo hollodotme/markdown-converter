@@ -6,6 +6,7 @@ use Generator;
 use hollodotme\Markdown\Exceptions\RuntimeException;
 use hollodotme\Markdown\Interfaces\ConvertsMarkdownElements;
 use hollodotme\Markdown\Interfaces\ParsesMarkdown;
+use hollodotme\Markdown\Interfaces\RepresentsMarkdownElement;
 use function fclose;
 use function fopen;
 use function fwrite;
@@ -43,8 +44,15 @@ final class Converter
 
 	public function __destruct()
 	{
-		@fclose( $this->sourceStream );
-		@fclose( $this->targetStream );
+		if ( false !== $this->sourceStream )
+		{
+			@fclose( $this->sourceStream );
+		}
+
+		if ( false !== $this->targetStream )
+		{
+			@fclose( $this->targetStream );
+		}
 	}
 
 	/**
@@ -69,20 +77,14 @@ final class Converter
 	 */
 	private function initSourceStreamFromFile( string $sourceFile ) : void
 	{
-		$this->sourceStream = @fopen( $sourceFile, 'rb' );
+		$sourceStream = @fopen( $sourceFile, 'rb' );
 
-		$this->guardSourceStreamIsValid();
-	}
-
-	/**
-	 * @throws RuntimeException
-	 */
-	private function guardSourceStreamIsValid() : void
-	{
-		if ( false === $this->sourceStream )
+		if ( false === $sourceStream )
 		{
-			throw new RuntimeException( 'Could not open source stream.' );
+			throw new RuntimeException( 'Could not open source stream from file.' );
 		}
+
+		$this->sourceStream = $sourceStream;
 	}
 
 	/**
@@ -90,12 +92,14 @@ final class Converter
 	 */
 	private function initTargetStream() : void
 	{
-		$this->targetStream = fopen( 'php://temp', 'wb' );
+		$targetStream = @fopen( 'php://temp', 'wb' );
 
-		if ( false === $this->targetStream )
+		if ( false === $targetStream )
 		{
-			throw new RuntimeException( 'Could not open target stream.' );
+			throw new RuntimeException( 'Could not open temporary target stream.' );
 		}
+
+		$this->targetStream = $targetStream;
 	}
 
 	/**
@@ -113,6 +117,9 @@ final class Converter
 		}
 	}
 
+	/**
+	 * @return Generator|RepresentsMarkdownElement[]
+	 */
 	private function getElementsFromSourceStream() : Generator
 	{
 		while ( $line = stream_get_line( $this->sourceStream, 2048 ) )
@@ -162,11 +169,22 @@ final class Converter
 		return $this->copyTargetStreamToFile( $targetFile );
 	}
 
+	/**
+	 * @param string $targetFile
+	 *
+	 * @throws RuntimeException
+	 * @return int
+	 */
 	private function copyTargetStreamToFile( string $targetFile ) : int
 	{
-		$targetFileHandle = fopen( $targetFile, 'wb' );
+		$targetFileHandle = @fopen( $targetFile, 'wb' );
 
-		return stream_copy_to_stream( $this->targetStream, $targetFileHandle );
+		if ( false === $targetFileHandle )
+		{
+			throw new RuntimeException( 'Could not open target file.' );
+		}
+
+		return (int)stream_copy_to_stream( $this->targetStream, $targetFileHandle );
 	}
 
 	/**
@@ -191,9 +209,14 @@ final class Converter
 	 */
 	private function initSourceStreamFromString( string $markdown ) : void
 	{
-		$this->sourceStream = @fopen( 'data:text/plain' . urlencode( $markdown ), 'rb' );
+		$sourceStream = @fopen( 'data:text/plain' . urlencode( $markdown ), 'rb' );
 
-		$this->guardSourceStreamIsValid();
+		if ( false === $sourceStream )
+		{
+			throw new RuntimeException( 'Could not open source stream from string.' );
+		}
+
+		$this->sourceStream = $sourceStream;
 	}
 
 	/**
