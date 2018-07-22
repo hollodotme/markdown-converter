@@ -5,11 +5,10 @@ namespace hollodotme\Markdown\BlockElements;
 use hollodotme\Markdown\Exceptions\LineMismatchException;
 use hollodotme\Markdown\Interfaces\RepresentsMarkdownElement;
 use function floor;
-use function preg_match;
 use function strlen;
 use function trim;
 
-final class Code implements RepresentsMarkdownElement
+final class Quote implements RepresentsMarkdownElement
 {
 	/** @var string */
 	private $contents;
@@ -27,32 +26,24 @@ final class Code implements RepresentsMarkdownElement
 	 * @param string $line
 	 *
 	 * @throws LineMismatchException
-	 * @return Code
+	 * @return Quote
 	 */
 	public static function fromLine( string $line ) : self
 	{
-		if ( preg_match( '#^(\t{1,})(\S.*)$#', $line, $matches ) )
+		if ( !preg_match( '#^(?:(\s+)?)>\s+(.+)#', $line, $matches ) )
 		{
-			$indentLevel = strlen( $matches[1] );
-			$contents    = trim( $matches[2] );
-
-			return new self( $contents, $indentLevel );
+			throw new LineMismatchException( 'Line does not match quote.' );
 		}
 
-		if ( preg_match( '#^( {4,})(\S.*)$#', $line, $matches ) )
-		{
-			$indentLevel = (int)floor( strlen( $matches[1] ) / 4 );
-			$contents    = trim( $matches[2] );
+		$indentLevel = (int)floor( strlen( $matches[1] ) / 2 ) + 1;
+		$contents    = trim( $matches[2] );
 
-			return new self( $contents, $indentLevel );
-		}
-
-		throw new LineMismatchException( 'Line does not match code.' );
+		return new self( $contents, $indentLevel );
 	}
 
 	public function getName() : string
 	{
-		return BlockElement::CODE;
+		return BlockElement::QUOTE;
 	}
 
 	public function getContents() : string

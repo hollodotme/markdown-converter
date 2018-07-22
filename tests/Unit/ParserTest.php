@@ -4,11 +4,11 @@ namespace hollodotme\Markdown\Tests\Unit;
 
 use hollodotme\Markdown\BlockElements\BlankLine;
 use hollodotme\Markdown\BlockElements\BlockElement;
-use hollodotme\Markdown\BlockElements\Blockquote;
 use hollodotme\Markdown\BlockElements\Code;
 use hollodotme\Markdown\BlockElements\Header;
 use hollodotme\Markdown\BlockElements\HorizontalRule;
 use hollodotme\Markdown\BlockElements\LineBreak;
+use hollodotme\Markdown\BlockElements\Quote;
 use hollodotme\Markdown\BlockElements\SortedListItem;
 use hollodotme\Markdown\BlockElements\UnsortedListItem;
 use hollodotme\Markdown\Interfaces\ParsesMarkdown;
@@ -33,84 +33,84 @@ final class ParserTest extends TestCase
 
 	/**
 	 * @param string $line
-	 * @param Header $expectedHeader
+	 * @param string $expectedContents
+	 * @param int    $expectedLevel
 	 *
 	 * @throws \PHPUnit\Framework\ExpectationFailedException
 	 * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
-	 *
 	 * @dataProvider headerLineProvider
 	 */
-	public function testCanGetHeaderElements( string $line, Header $expectedHeader ) : void
+	public function testCanGetHeaderElements( string $line, string $expectedContents, int $expectedLevel ) : void
 	{
 		$elements = $this->parser->getBlockElements( $line );
 
 		/** @var Header $header */
 		$header = iterator_to_array( $elements )[0];
 
-		$this->assertEquals( $expectedHeader, $header );
-		$this->assertSame( $expectedHeader->getName(), $header->getName() );
-		$this->assertSame( $expectedHeader->getContents(), $header->getContents() );
-		$this->assertSame( $expectedHeader->getLevel(), $header->getLevel() );
+		$this->assertSame( BlockElement::HEADER, $header->getName() );
+		$this->assertSame( $expectedContents, $header->getContents() );
+		$this->assertSame( $expectedLevel, $header->getLevel() );
 	}
 
 	public function headerLineProvider() : array
 	{
 		return [
 			[
-				'line'           => '# Header Level 1',
-				'expectedHeader' => new Header( 'Header Level 1', 1 ),
+				'line'             => '# Header Level 1',
+				'expectedContents' => 'Header Level 1',
+				'expectedLevel'    => 1,
 			],
 			[
-				'line'           => '## Header Level 2',
-				'expectedHeader' => new Header( 'Header Level 2', 2 ),
+				'line'             => '## Header Level 2',
+				'expectedContents' => 'Header Level 2',
+				'expectedLevel'    => 2,
 			],
 			[
-				'line'           => '### Header Level 3',
-				'expectedHeader' => new Header( 'Header Level 3', 3 ),
+				'line'             => '### Header Level 3',
+				'expectedContents' => 'Header Level 3',
+				'expectedLevel'    => 3,
 			],
 			[
-				'line'           => '#### Header Level 4',
-				'expectedHeader' => new Header( 'Header Level 4', 4 ),
+				'line'             => '#### Header Level 4',
+				'expectedContents' => 'Header Level 4',
+				'expectedLevel'    => 4,
 			],
 			[
-				'line'           => '##### Header Level 5',
-				'expectedHeader' => new Header( 'Header Level 5', 5 ),
+				'line'             => '##### Header Level 5',
+				'expectedContents' => 'Header Level 5',
+				'expectedLevel'    => 5,
 			],
 			[
-				'line'           => '###### Header Level 6',
-				'expectedHeader' => new Header( 'Header Level 6', 6 ),
-			],
-			[
-				'line'           => '#### Header # Level 4',
-				'expectedHeader' => new Header( 'Header # Level 4', 4 ),
-			],
-			[
-				'line'           => '### # Header Level 3',
-				'expectedHeader' => new Header( '# Header Level 3', 3 ),
+				'line'             => '###### Header Level 6',
+				'expectedContents' => 'Header Level 6',
+				'expectedLevel'    => 6,
 			],
 		];
 	}
 
 	/**
-	 * @param string           $line
-	 * @param UnsortedListItem $expectedListElement
+	 * @param string $line
+	 * @param string $expectedContents
+	 * @param int    $expectedIndentLevel
 	 *
 	 * @throws \PHPUnit\Framework\ExpectationFailedException
 	 * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
-	 *
 	 * @dataProvider unsortedListLineProvider
 	 */
-	public function testCanGetUnsortedListElements( string $line, UnsortedListItem $expectedListElement ) : void
+	public function testCanGetUnsortedListElements(
+		string $line,
+		string $expectedContents,
+		int $expectedIndentLevel
+	) : void
 	{
 		$elements = $this->parser->getBlockElements( $line );
 
 		/** @var UnsortedListItem $listElement */
 		$listElement = iterator_to_array( $elements )[0];
 
-		$this->assertEquals( $expectedListElement, $listElement );
-		$this->assertSame( $expectedListElement->getName(), $listElement->getName() );
-		$this->assertSame( $expectedListElement->getContents(), $listElement->getContents() );
-		$this->assertSame( $expectedListElement->getIndentLevel(), $listElement->getIndentLevel() );
+		$this->assertSame( BlockElement::UNSORTED_LIST_ITEM, $listElement->getName() );
+		$this->assertSame( $expectedContents, $listElement->getContents() );
+		$this->assertSame( $expectedIndentLevel, $listElement->getIndentLevel() );
 	}
 
 	public function unsortedListLineProvider() : array
@@ -119,85 +119,74 @@ final class ParserTest extends TestCase
 			# "*" as list indicator
 			[
 				'line'                => '* List Item Level 1',
-				'expectedListElement' => new UnsortedListItem( 'List Item Level 1', 1 ),
+				'expectedContents'    => 'List Item Level 1',
+				'expectedIndentLevel' => 1,
 			],
 			[
 				'line'                => ' * List Item Level 1',
-				'expectedListElement' => new UnsortedListItem( 'List Item Level 1', 1 ),
+				'expectedContents'    => 'List Item Level 1',
+				'expectedIndentLevel' => 1,
 			],
 			[
 				'line'                => '  * List Item Level 2',
-				'expectedListElement' => new UnsortedListItem( 'List Item Level 2', 2 ),
+				'expectedContents'    => 'List Item Level 2',
+				'expectedIndentLevel' => 2,
 			],
 			[
 				'line'                => '   * List Item Level 2',
-				'expectedListElement' => new UnsortedListItem( 'List Item Level 2', 2 ),
-			],
-			[
-				'line'                => '    * List Item Level 3',
-				'expectedListElement' => new UnsortedListItem( 'List Item Level 3', 3 ),
-			],
-			[
-				'line'                => '     * List Item Level 3',
-				'expectedListElement' => new UnsortedListItem( 'List Item Level 3', 3 ),
-			],
-			[
-				'line'                => ' * List * Item Level 1 ',
-				'expectedListElement' => new UnsortedListItem( 'List * Item Level 1', 1 ),
+				'expectedContents'    => 'List Item Level 2',
+				'expectedIndentLevel' => 2,
 			],
 			# "-" as list indicator
 			[
 				'line'                => '- List Item Level 1',
-				'expectedListElement' => new UnsortedListItem( 'List Item Level 1', 1 ),
+				'expectedContents'    => 'List Item Level 1',
+				'expectedIndentLevel' => 1,
 			],
 			[
 				'line'                => ' - List Item Level 1',
-				'expectedListElement' => new UnsortedListItem( 'List Item Level 1', 1 ),
+				'expectedContents'    => 'List Item Level 1',
+				'expectedIndentLevel' => 1,
 			],
 			[
 				'line'                => '  - List Item Level 2',
-				'expectedListElement' => new UnsortedListItem( 'List Item Level 2', 2 ),
+				'expectedContents'    => 'List Item Level 2',
+				'expectedIndentLevel' => 2,
 			],
 			[
 				'line'                => '   - List Item Level 2',
-				'expectedListElement' => new UnsortedListItem( 'List Item Level 2', 2 ),
-			],
-			[
-				'line'                => '    - List Item Level 3',
-				'expectedListElement' => new UnsortedListItem( 'List Item Level 3', 3 ),
-			],
-			[
-				'line'                => '     - List Item Level 3',
-				'expectedListElement' => new UnsortedListItem( 'List Item Level 3', 3 ),
-			],
-			[
-				'line'                => ' - List - Item Level 1 ',
-				'expectedListElement' => new UnsortedListItem( 'List - Item Level 1', 1 ),
+				'expectedContents'    => 'List Item Level 2',
+				'expectedIndentLevel' => 2,
 			],
 		];
 	}
 
 	/**
-	 * @param string         $line
-	 * @param SortedListItem $expectedListElement
+	 * @param string $line
+	 * @param string $expectedContents
+	 * @param string $expectedNumbering
+	 * @param int    $expectedIndentLevel
 	 *
 	 * @throws \PHPUnit\Framework\ExpectationFailedException
 	 * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
-	 *
 	 * @dataProvider sortedListLineProvider
 	 */
-	public function testCanGetSortedListElements( string $line, SortedListItem $expectedListElement ) : void
+	public function testCanGetSortedListElements(
+		string $line,
+		string $expectedContents,
+		string $expectedNumbering,
+		int $expectedIndentLevel
+	) : void
 	{
 		$elements = $this->parser->getBlockElements( $line );
 
 		/** @var SortedListItem $listElement */
 		$listElement = iterator_to_array( $elements )[0];
 
-		$this->assertEquals( $expectedListElement, $listElement );
-		$this->assertSame( $expectedListElement->getName(), $listElement->getName() );
-		$this->assertSame( $expectedListElement->getContents(), $listElement->getContents() );
-		$this->assertSame( $expectedListElement->getNumbering(), $listElement->getNumbering() );
-		$this->assertSame( $expectedListElement->getIndentLevel(), $listElement->getIndentLevel() );
+		$this->assertSame( BlockElement::SORTED_LIST_ITEM, $listElement->getName() );
+		$this->assertSame( $expectedContents, $listElement->getContents() );
+		$this->assertSame( $expectedNumbering, $listElement->getNumbering() );
+		$this->assertSame( $expectedIndentLevel, $listElement->getIndentLevel() );
 	}
 
 	public function sortedListLineProvider() : array
@@ -205,71 +194,68 @@ final class ParserTest extends TestCase
 		return [
 			[
 				'line'                => '1. List Item Level 1',
-				'expectedListElement' => new SortedListItem( 'List Item Level 1', '1.' ),
-			],
-			[
-				'line'                => ' 1. List Item Level 1 ',
-				'expectedListElement' => new SortedListItem( 'List Item Level 1', '1.' ),
+				'expectedContents'    => 'List Item Level 1',
+				'expectedNumbering'   => '1.',
+				'expectedIndentLevel' => 1,
 			],
 			[
 				'line'                => '1.1. List Item Level 2',
-				'expectedListElement' => new SortedListItem( 'List Item Level 2', '1.1.' ),
-			],
-			[
-				'line'                => ' 1.2. List Item Level 2',
-				'expectedListElement' => new SortedListItem( 'List Item Level 2', '1.2.' ),
+				'expectedContents'    => 'List Item Level 2',
+				'expectedNumbering'   => '1.1.',
+				'expectedIndentLevel' => 2,
 			],
 			[
 				'line'                => '1.2.3. List Item Level 3',
-				'expectedListElement' => new SortedListItem( 'List Item Level 3', '1.2.3.' ),
+				'expectedContents'    => 'List Item Level 3',
+				'expectedNumbering'   => '1.2.3.',
+				'expectedIndentLevel' => 3,
 			],
 		];
 	}
 
 	/**
-	 * @param string     $line
-	 * @param Blockquote $expectedBlockquoteElement
+	 * @param string $line
+	 * @param string $expectedContents
+	 * @param int    $expectedIndentLevel
 	 *
 	 * @throws \PHPUnit\Framework\ExpectationFailedException
 	 * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
-	 *
 	 * @dataProvider blockquoteLineProvider
 	 */
-	public function testCanGetBlockquoteElements( string $line, Blockquote $expectedBlockquoteElement ) : void
+	public function testCanGetQuoteElements( string $line, string $expectedContents, int $expectedIndentLevel ) : void
 	{
 		$elements = $this->parser->getBlockElements( $line );
 
-		/** @var Blockquote $blockquoteElement */
+		/** @var Quote $blockquoteElement */
 		$blockquoteElement = iterator_to_array( $elements )[0];
 
-		$this->assertEquals( $expectedBlockquoteElement, $blockquoteElement );
-		$this->assertSame( $expectedBlockquoteElement->getName(), $blockquoteElement->getName() );
-		$this->assertSame( $expectedBlockquoteElement->getContents(), $blockquoteElement->getContents() );
-		$this->assertSame( $expectedBlockquoteElement->getIndentLevel(), $blockquoteElement->getIndentLevel() );
+		$this->assertSame( BlockElement::QUOTE, $blockquoteElement->getName() );
+		$this->assertSame( $expectedContents, $blockquoteElement->getContents() );
+		$this->assertSame( $expectedIndentLevel, $blockquoteElement->getIndentLevel() );
 	}
 
 	public function blockquoteLineProvider() : array
 	{
 		return [
 			[
-				'line'                      => '> Blockquote Level 1',
-				'expectedBlockquoteElement' => new Blockquote( 'Blockquote Level 1', 1 ),
+				'line'                => '> Blockquote Level 1',
+				'expectedContents'    => 'Blockquote Level 1',
+				'expectedIndentLevel' => 1,
 			],
 			[
-				'line'                      => ' > Blockquote Level 1 ',
-				'expectedBlockquoteElement' => new Blockquote( 'Blockquote Level 1', 1 ),
+				'line'                => ' > Blockquote Level 1',
+				'expectedContents'    => 'Blockquote Level 1',
+				'expectedIndentLevel' => 1,
 			],
 			[
-				'line'                      => '  > Blockquote Level 2',
-				'expectedBlockquoteElement' => new Blockquote( 'Blockquote Level 2', 2 ),
+				'line'                => '  > Blockquote Level 2',
+				'expectedContents'    => 'Blockquote Level 2',
+				'expectedIndentLevel' => 2,
 			],
 			[
-				'line'                      => '   > Blockquote Level 2 ',
-				'expectedBlockquoteElement' => new Blockquote( 'Blockquote Level 2', 2 ),
-			],
-			[
-				'line'                      => '> >Blockquote Level 1 ',
-				'expectedBlockquoteElement' => new Blockquote( '>Blockquote Level 1', 1 ),
+				'line'                => '   > Blockquote Level 2',
+				'expectedContents'    => 'Blockquote Level 2',
+				'expectedIndentLevel' => 2,
 			],
 		];
 	}
@@ -384,44 +370,47 @@ final class ParserTest extends TestCase
 
 	/**
 	 * @param string $line
-	 * @param Code   $expectedElement
+	 * @param string $expectedContents
+	 * @param int    $expectedIndentLevel
 	 *
 	 * @throws \PHPUnit\Framework\ExpectationFailedException
 	 * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
-	 *
 	 * @dataProvider codeLineProvider
 	 */
-	public function testCanGetCode( string $line, Code $expectedElement ) : void
+	public function testCanGetCode( string $line, string $expectedContents, int $expectedIndentLevel ) : void
 	{
 		$elements = $this->parser->getBlockElements( $line );
 
+		/** @var Code $code */
 		$code = iterator_to_array( $elements )[0];
 
-		$this->assertEquals( $expectedElement, $code );
+		$this->assertSame( BlockElement::CODE, $code->getName() );
+		$this->assertSame( $expectedContents, $code->getContents() );
+		$this->assertSame( $expectedIndentLevel, $code->getIndentLevel() );
 	}
 
 	public function codeLineProvider() : array
 	{
 		return [
 			[
-				'line'            => '    { Code; }',
-				'expectedElement' => new Code( '{ Code; }', 1 ),
+				'line'                => '    { Code; }',
+				'expectedContents'    => '{ Code; }',
+				'expectedIndentLevel' => 1,
 			],
 			[
-				'line'            => "\t{ Code; }",
-				'expectedElement' => new Code( '{ Code; }', 1 ),
+				'line'                => "\t{ Code; }",
+				'expectedContents'    => '{ Code; }',
+				'expectedIndentLevel' => 1,
 			],
 			[
-				'line'            => '      { Code; }',
-				'expectedElement' => new Code( '{ Code; }', 1 ),
+				'line'                => '        { Code; }',
+				'expectedContents'    => '{ Code; }',
+				'expectedIndentLevel' => 2,
 			],
 			[
-				'line'            => '        { Code; }',
-				'expectedElement' => new Code( '{ Code; }', 2 ),
-			],
-			[
-				'line'            => "\t\t{ Code; }",
-				'expectedElement' => new Code( '{ Code; }', 2 ),
+				'line'                => "\t\t{ Code; }",
+				'expectedContents'    => '{ Code; }',
+				'expectedIndentLevel' => 2,
 			],
 		];
 	}
