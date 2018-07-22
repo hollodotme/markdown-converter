@@ -10,9 +10,4 @@ final class LineBreak implements RepresentsMarkdownElement
 	{
 		return Element::LINE_BREAK;
 	}
-
-	public function isMultiline() : bool
-	{
-		return false;
-	}
 }

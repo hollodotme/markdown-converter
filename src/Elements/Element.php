@@ -15,4 +15,6 @@ abstract class Element
 	public const HORIZONTAL_RULE    = 'horizontal rule';
 
 	public const LINE_BREAK         = 'line break';
+
+	public const BLANK_LINE         = 'blank line';
 }

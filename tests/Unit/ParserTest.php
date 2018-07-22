@@ -2,6 +2,7 @@
 
 namespace hollodotme\Markdown\Tests\Unit;
 
+use hollodotme\Markdown\Elements\BlankLine;
 use hollodotme\Markdown\Elements\Blockquote;
 use hollodotme\Markdown\Elements\Element;
 use hollodotme\Markdown\Elements\Header;
@@ -47,7 +48,6 @@ final class ParserTest extends TestCase
 
 		$this->assertEquals( $expectedHeader, $header );
 		$this->assertSame( $expectedHeader->getName(), $header->getName() );
-		$this->assertSame( $expectedHeader->isMultiline(), $header->isMultiline() );
 		$this->assertSame( $expectedHeader->getContents(), $header->getContents() );
 		$this->assertSame( $expectedHeader->getLevel(), $header->getLevel() );
 	}
@@ -108,7 +108,6 @@ final class ParserTest extends TestCase
 
 		$this->assertEquals( $expectedListElement, $listElement );
 		$this->assertSame( $expectedListElement->getName(), $listElement->getName() );
-		$this->assertSame( $expectedListElement->isMultiline(), $listElement->isMultiline() );
 		$this->assertSame( $expectedListElement->getContents(), $listElement->getContents() );
 		$this->assertSame( $expectedListElement->getIndentLevel(), $listElement->getIndentLevel() );
 	}
@@ -195,7 +194,6 @@ final class ParserTest extends TestCase
 
 		$this->assertEquals( $expectedListElement, $listElement );
 		$this->assertSame( $expectedListElement->getName(), $listElement->getName() );
-		$this->assertSame( $expectedListElement->isMultiline(), $listElement->isMultiline() );
 		$this->assertSame( $expectedListElement->getContents(), $listElement->getContents() );
 		$this->assertSame( $expectedListElement->getNumbering(), $listElement->getNumbering() );
 		$this->assertSame( $expectedListElement->getIndentLevel(), $listElement->getIndentLevel() );
@@ -245,7 +243,6 @@ final class ParserTest extends TestCase
 
 		$this->assertEquals( $expectedBlockquoteElement, $blockquoteElement );
 		$this->assertSame( $expectedBlockquoteElement->getName(), $blockquoteElement->getName() );
-		$this->assertSame( $expectedBlockquoteElement->isMultiline(), $blockquoteElement->isMultiline() );
 		$this->assertSame( $expectedBlockquoteElement->getContents(), $blockquoteElement->getContents() );
 		$this->assertSame( $expectedBlockquoteElement->getIndentLevel(), $blockquoteElement->getIndentLevel() );
 	}
@@ -292,7 +289,6 @@ final class ParserTest extends TestCase
 
 		$this->assertInstanceOf( HorizontalRule::class, $hr );
 		$this->assertSame( Element::HORIZONTAL_RULE, $hr->getName() );
-		$this->assertFalse( $hr->isMultiline() );
 	}
 
 	public function horizontalRuleLineProvider() : array
@@ -335,7 +331,6 @@ final class ParserTest extends TestCase
 
 		$this->assertInstanceOf( LineBreak::class, $lineBreak );
 		$this->assertSame( Element::LINE_BREAK, $lineBreak->getName() );
-		$this->assertFalse( $lineBreak->isMultiline() );
 	}
 
 	public function lineBreakLineProvider() : array
@@ -345,10 +340,43 @@ final class ParserTest extends TestCase
 				'line' => 'Something   ',
 			],
 			[
+				'line' => ' Something  ',
+			],
+			[
+				'line' => 'Something -  ',
+			],
+		];
+	}
+
+	/**
+	 * @param string $line
+	 *
+	 * @throws \PHPUnit\Framework\ExpectationFailedException
+	 * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
+	 *
+	 * @dataProvider blankLineProvider
+	 */
+	public function testCanGetBlankLine( string $line ) : void
+	{
+		$elements = $this->parser->getElements( $line );
+
+		$blankLine = iterator_to_array( $elements )[0];
+
+		$this->assertInstanceOf( BlankLine::class, $blankLine );
+		$this->assertSame( Element::BLANK_LINE, $blankLine->getName() );
+	}
+
+	public function blankLineProvider() : array
+	{
+		return [
+			[
+				'line' => '',
+			],
+			[
 				'line' => '  ',
 			],
 			[
-				'line' => 'Something   ',
+				'line' => "\t",
 			],
 		];
 	}

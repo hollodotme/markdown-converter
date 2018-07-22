@@ -3,6 +3,7 @@
 namespace hollodotme\Markdown;
 
 use Generator;
+use hollodotme\Markdown\Elements\BlankLine;
 use hollodotme\Markdown\Elements\Blockquote;
 use hollodotme\Markdown\Elements\Header;
 use hollodotme\Markdown\Elements\HorizontalRule;
@@ -15,7 +16,6 @@ use function array_filter;
 use function floor;
 use function preg_match;
 use function strlen;
-use function substr;
 
 final class Parser implements ParsesMarkdown
 {
@@ -34,6 +34,7 @@ final class Parser implements ParsesMarkdown
 		$elements[] = $this->getSortedListItem( $line );
 		$elements[] = $this->getBlockquote( $line );
 		$elements[] = $this->getLineBreak( $line );
+		$elements[] = $this->getBlankLine( $line );
 
 		yield from array_values( array_filter( $elements ) );
 	}
@@ -104,11 +105,21 @@ final class Parser implements ParsesMarkdown
 
 	private function getLineBreak( string $line ) : ?LineBreak
 	{
-		if ( '  ' !== substr( $line, -2 ) )
+		if ( !preg_match( '#\S\s{2,}$#', $line ) )
 		{
 			return null;
 		}
 
 		return new LineBreak();
+	}
+
+	private function getBlankLine( string $line ) : ?BlankLine
+	{
+		if ( !preg_match( '#^\s*$#', $line ) )
+		{
+			return null;
+		}
+
+		return new BlankLine();
 	}
 }

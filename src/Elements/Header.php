@@ -27,11 +27,6 @@ final class Header implements RepresentsMarkdownElement
 		return Element::HEADER;
 	}
 
-	public function isMultiline() : bool
-	{
-		return false;
-	}
-
 	public function getContents() : string
 	{
 		return $this->contents;

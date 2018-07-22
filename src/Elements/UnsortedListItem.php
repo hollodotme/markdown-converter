@@ -23,11 +23,6 @@ final class UnsortedListItem implements RepresentsMarkdownElement
 		return Element::UNSORTED_LIST_ITEM;
 	}
 
-	public function isMultiline() : bool
-	{
-		return false;
-	}
-
 	public function getContents() : string
 	{
 		return $this->contents;

@@ -4,10 +4,10 @@ namespace hollodotme\Markdown\Elements;
 
 use hollodotme\Markdown\Interfaces\RepresentsMarkdownElement;
 
-final class HorizontalRule implements RepresentsMarkdownElement
+final class BlankLine implements RepresentsMarkdownElement
 {
 	public function getName() : string
 	{
-		return Element::HORIZONTAL_RULE;
+		return Element::BLANK_LINE;
 	}
 }

@@ -23,11 +23,6 @@ final class Blockquote implements RepresentsMarkdownElement
 		return Element::BLOCKQUOTE;
 	}
 
-	public function isMultiline() : bool
-	{
-		return false;
-	}
-
 	public function getContents() : string
 	{
 		return $this->contents;

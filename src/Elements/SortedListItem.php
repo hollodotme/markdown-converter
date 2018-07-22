@@ -28,11 +28,6 @@ final class SortedListItem implements RepresentsMarkdownElement
 		return Element::SORTED_LIST_ITEM;
 	}
 
-	public function isMultiline() : bool
-	{
-		return false;
-	}
-
 	public function getContents() : string
 	{
 		return $this->contents;
