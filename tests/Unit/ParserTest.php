@@ -3,8 +3,8 @@
 namespace hollodotme\Markdown\Tests\Unit;
 
 use hollodotme\Markdown\Elements\BlankLine;
+use hollodotme\Markdown\Elements\BlockElement;
 use hollodotme\Markdown\Elements\Blockquote;
-use hollodotme\Markdown\Elements\Element;
 use hollodotme\Markdown\Elements\Header;
 use hollodotme\Markdown\Elements\HorizontalRule;
 use hollodotme\Markdown\Elements\LineBreak;
@@ -288,7 +288,7 @@ final class ParserTest extends TestCase
 		$hr = iterator_to_array( $elements )[0];
 
 		$this->assertInstanceOf( HorizontalRule::class, $hr );
-		$this->assertSame( Element::HORIZONTAL_RULE, $hr->getName() );
+		$this->assertSame( BlockElement::HORIZONTAL_RULE, $hr->getName() );
 	}
 
 	public function horizontalRuleLineProvider() : array
@@ -330,7 +330,7 @@ final class ParserTest extends TestCase
 		$lineBreak = iterator_to_array( $elements )[0];
 
 		$this->assertInstanceOf( LineBreak::class, $lineBreak );
-		$this->assertSame( Element::LINE_BREAK, $lineBreak->getName() );
+		$this->assertSame( BlockElement::LINE_BREAK, $lineBreak->getName() );
 	}
 
 	public function lineBreakLineProvider() : array
@@ -363,7 +363,7 @@ final class ParserTest extends TestCase
 		$blankLine = iterator_to_array( $elements )[0];
 
 		$this->assertInstanceOf( BlankLine::class, $blankLine );
-		$this->assertSame( Element::BLANK_LINE, $blankLine->getName() );
+		$this->assertSame( BlockElement::BLANK_LINE, $blankLine->getName() );
 	}
 
 	public function blankLineProvider() : array

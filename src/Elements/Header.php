@@ -24,7 +24,7 @@ final class Header implements RepresentsMarkdownElement
 
 	public function getName() : string
 	{
-		return Element::HEADER;
+		return BlockElement::HEADER;
 	}
 
 	public function getContents() : string

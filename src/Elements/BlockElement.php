@@ -2,7 +2,7 @@
 
 namespace hollodotme\Markdown\Elements;
 
-abstract class Element
+abstract class BlockElement
 {
 	public const HEADER             = 'header';
 
@@ -10,11 +10,13 @@ abstract class Element
 
 	public const SORTED_LIST_ITEM   = 'sorted list item';
 
-	public const BLOCKQUOTE         = 'blockquote';
+	public const QUOTE              = 'quote';
 
 	public const HORIZONTAL_RULE    = 'horizontal rule';
 
 	public const LINE_BREAK         = 'line break';
 
 	public const BLANK_LINE         = 'blank line';
+
+	public const CODE               = 'code';
 }

@@ -20,7 +20,7 @@ final class Blockquote implements RepresentsMarkdownElement
 
 	public function getName() : string
 	{
-		return Element::BLOCKQUOTE;
+		return BlockElement::QUOTE;
 	}
 
 	public function getContents() : string

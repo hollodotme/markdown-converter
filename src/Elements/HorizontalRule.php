@@ -8,6 +8,6 @@ final class HorizontalRule implements RepresentsMarkdownElement
 {
 	public function getName() : string
 	{
-		return Element::HORIZONTAL_RULE;
+		return BlockElement::HORIZONTAL_RULE;
 	}
 }

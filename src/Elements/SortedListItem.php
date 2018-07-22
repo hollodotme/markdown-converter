@@ -25,7 +25,7 @@ final class SortedListItem implements RepresentsMarkdownElement
 
 	public function getName() : string
 	{
-		return Element::SORTED_LIST_ITEM;
+		return BlockElement::SORTED_LIST_ITEM;
 	}
 
 	public function getContents() : string

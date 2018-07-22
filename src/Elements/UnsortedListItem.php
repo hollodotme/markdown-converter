@@ -20,7 +20,7 @@ final class UnsortedListItem implements RepresentsMarkdownElement
 
 	public function getName() : string
 	{
-		return Element::UNSORTED_LIST_ITEM;
+		return BlockElement::UNSORTED_LIST_ITEM;
 	}
 
 	public function getContents() : string

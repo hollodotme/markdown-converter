@@ -8,6 +8,6 @@ final class LineBreak implements RepresentsMarkdownElement
 {
 	public function getName() : string
 	{
-		return Element::LINE_BREAK;
+		return BlockElement::LINE_BREAK;
 	}
 }
