@@ -11,5 +11,5 @@ interface ParsesMarkdown
 	 *
 	 * @return Generator|RepresentsMarkdownElement[]
 	 */
-	public function getElements(string $line) : Generator;
+	public function getBlockElements( string $line ) : Generator;
 }

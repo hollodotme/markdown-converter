@@ -1,10 +1,10 @@
 <?php declare(strict_types=1);
 
-namespace hollodotme\Markdown\Elements;
+namespace hollodotme\Markdown\BlockElements;
 
 use hollodotme\Markdown\Interfaces\RepresentsMarkdownElement;
 
-final class UnsortedListItem implements RepresentsMarkdownElement
+final class Blockquote implements RepresentsMarkdownElement
 {
 	/** @var string */
 	private $contents;
@@ -20,7 +20,7 @@ final class UnsortedListItem implements RepresentsMarkdownElement
 
 	public function getName() : string
 	{
-		return BlockElement::UNSORTED_LIST_ITEM;
+		return BlockElement::QUOTE;
 	}
 
 	public function getContents() : string

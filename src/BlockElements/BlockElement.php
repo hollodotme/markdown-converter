@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace hollodotme\Markdown\Elements;
+namespace hollodotme\Markdown\BlockElements;
 
 abstract class BlockElement
 {

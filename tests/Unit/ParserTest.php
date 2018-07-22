@@ -2,14 +2,15 @@
 
 namespace hollodotme\Markdown\Tests\Unit;
 
-use hollodotme\Markdown\Elements\BlankLine;
-use hollodotme\Markdown\Elements\BlockElement;
-use hollodotme\Markdown\Elements\Blockquote;
-use hollodotme\Markdown\Elements\Header;
-use hollodotme\Markdown\Elements\HorizontalRule;
-use hollodotme\Markdown\Elements\LineBreak;
-use hollodotme\Markdown\Elements\SortedListItem;
-use hollodotme\Markdown\Elements\UnsortedListItem;
+use hollodotme\Markdown\BlockElements\BlankLine;
+use hollodotme\Markdown\BlockElements\BlockElement;
+use hollodotme\Markdown\BlockElements\Blockquote;
+use hollodotme\Markdown\BlockElements\Code;
+use hollodotme\Markdown\BlockElements\Header;
+use hollodotme\Markdown\BlockElements\HorizontalRule;
+use hollodotme\Markdown\BlockElements\LineBreak;
+use hollodotme\Markdown\BlockElements\SortedListItem;
+use hollodotme\Markdown\BlockElements\UnsortedListItem;
 use hollodotme\Markdown\Interfaces\ParsesMarkdown;
 use hollodotme\Markdown\Parser;
 use PHPUnit\Framework\TestCase;
@@ -41,7 +42,7 @@ final class ParserTest extends TestCase
 	 */
 	public function testCanGetHeaderElements( string $line, Header $expectedHeader ) : void
 	{
-		$elements = $this->parser->getElements( $line );
+		$elements = $this->parser->getBlockElements( $line );
 
 		/** @var Header $header */
 		$header = iterator_to_array( $elements )[0];
@@ -101,7 +102,7 @@ final class ParserTest extends TestCase
 	 */
 	public function testCanGetUnsortedListElements( string $line, UnsortedListItem $expectedListElement ) : void
 	{
-		$elements = $this->parser->getElements( $line );
+		$elements = $this->parser->getBlockElements( $line );
 
 		/** @var UnsortedListItem $listElement */
 		$listElement = iterator_to_array( $elements )[0];
@@ -187,7 +188,7 @@ final class ParserTest extends TestCase
 	 */
 	public function testCanGetSortedListElements( string $line, SortedListItem $expectedListElement ) : void
 	{
-		$elements = $this->parser->getElements( $line );
+		$elements = $this->parser->getBlockElements( $line );
 
 		/** @var SortedListItem $listElement */
 		$listElement = iterator_to_array( $elements )[0];
@@ -236,7 +237,7 @@ final class ParserTest extends TestCase
 	 */
 	public function testCanGetBlockquoteElements( string $line, Blockquote $expectedBlockquoteElement ) : void
 	{
-		$elements = $this->parser->getElements( $line );
+		$elements = $this->parser->getBlockElements( $line );
 
 		/** @var Blockquote $blockquoteElement */
 		$blockquoteElement = iterator_to_array( $elements )[0];
@@ -283,7 +284,7 @@ final class ParserTest extends TestCase
 	 */
 	public function testCanGetHorizontalRule( string $line ) : void
 	{
-		$elements = $this->parser->getElements( $line );
+		$elements = $this->parser->getBlockElements( $line );
 
 		$hr = iterator_to_array( $elements )[0];
 
@@ -325,7 +326,7 @@ final class ParserTest extends TestCase
 	 */
 	public function testCanGetLineBreak( string $line ) : void
 	{
-		$elements = $this->parser->getElements( $line );
+		$elements = $this->parser->getBlockElements( $line );
 
 		$lineBreak = iterator_to_array( $elements )[0];
 
@@ -358,7 +359,7 @@ final class ParserTest extends TestCase
 	 */
 	public function testCanGetBlankLine( string $line ) : void
 	{
-		$elements = $this->parser->getElements( $line );
+		$elements = $this->parser->getBlockElements( $line );
 
 		$blankLine = iterator_to_array( $elements )[0];
 
@@ -377,6 +378,50 @@ final class ParserTest extends TestCase
 			],
 			[
 				'line' => "\t",
+			],
+		];
+	}
+
+	/**
+	 * @param string $line
+	 * @param Code   $expectedElement
+	 *
+	 * @throws \PHPUnit\Framework\ExpectationFailedException
+	 * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
+	 *
+	 * @dataProvider codeLineProvider
+	 */
+	public function testCanGetCode( string $line, Code $expectedElement ) : void
+	{
+		$elements = $this->parser->getBlockElements( $line );
+
+		$code = iterator_to_array( $elements )[0];
+
+		$this->assertEquals( $expectedElement, $code );
+	}
+
+	public function codeLineProvider() : array
+	{
+		return [
+			[
+				'line'            => '    { Code; }',
+				'expectedElement' => new Code( '{ Code; }', 1 ),
+			],
+			[
+				'line'            => "\t{ Code; }",
+				'expectedElement' => new Code( '{ Code; }', 1 ),
+			],
+			[
+				'line'            => '      { Code; }',
+				'expectedElement' => new Code( '{ Code; }', 1 ),
+			],
+			[
+				'line'            => '        { Code; }',
+				'expectedElement' => new Code( '{ Code; }', 2 ),
+			],
+			[
+				'line'            => "\t\t{ Code; }",
+				'expectedElement' => new Code( '{ Code; }', 2 ),
 			],
 		];
 	}

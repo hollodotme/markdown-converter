@@ -124,7 +124,7 @@ final class Converter
 	{
 		while ( $line = stream_get_line( $this->sourceStream, 2048 ) )
 		{
-			yield from $this->parser->getElements( $line );
+			yield from $this->parser->getBlockElements( $line );
 		}
 	}
 

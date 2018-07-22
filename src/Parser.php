@@ -3,13 +3,14 @@
 namespace hollodotme\Markdown;
 
 use Generator;
-use hollodotme\Markdown\Elements\BlankLine;
-use hollodotme\Markdown\Elements\Blockquote;
-use hollodotme\Markdown\Elements\Header;
-use hollodotme\Markdown\Elements\HorizontalRule;
-use hollodotme\Markdown\Elements\LineBreak;
-use hollodotme\Markdown\Elements\SortedListItem;
-use hollodotme\Markdown\Elements\UnsortedListItem;
+use hollodotme\Markdown\BlockElements\BlankLine;
+use hollodotme\Markdown\BlockElements\Blockquote;
+use hollodotme\Markdown\BlockElements\Code;
+use hollodotme\Markdown\BlockElements\Header;
+use hollodotme\Markdown\BlockElements\HorizontalRule;
+use hollodotme\Markdown\BlockElements\LineBreak;
+use hollodotme\Markdown\BlockElements\SortedListItem;
+use hollodotme\Markdown\BlockElements\UnsortedListItem;
 use hollodotme\Markdown\Interfaces\ParsesMarkdown;
 use hollodotme\Markdown\Interfaces\RepresentsMarkdownElement;
 use function array_filter;
@@ -24,7 +25,7 @@ final class Parser implements ParsesMarkdown
 	 *
 	 * @return Generator|RepresentsMarkdownElement[]
 	 */
-	public function getElements( string $line ) : Generator
+	public function getBlockElements( string $line ) : Generator
 	{
 		$elements = [];
 
@@ -33,6 +34,7 @@ final class Parser implements ParsesMarkdown
 		$elements[] = $this->getUnsortedListItem( $line );
 		$elements[] = $this->getSortedListItem( $line );
 		$elements[] = $this->getBlockquote( $line );
+		$elements[] = $this->getCode( $line );
 		$elements[] = $this->getLineBreak( $line );
 		$elements[] = $this->getBlankLine( $line );
 
@@ -89,6 +91,27 @@ final class Parser implements ParsesMarkdown
 		$contents    = trim( $matches[2] );
 
 		return new Blockquote( $contents, $indentLevel );
+	}
+
+	private function getCode( string $line ) : ?Code
+	{
+		if ( preg_match( '#^(\t{1,})(\S.*)$#', $line, $matches ) )
+		{
+			$indentLevel = strlen( $matches[1] );
+			$contents    = trim( $matches[2] );
+
+			return new Code( $contents, $indentLevel );
+		}
+
+		if ( preg_match( '#^( {4,})(\S.*)$#', $line, $matches ) )
+		{
+			$indentLevel = (int)floor( strlen( $matches[1] ) / 4 );
+			$contents    = trim( $matches[2] );
+
+			return new Code( $contents, $indentLevel );
+		}
+
+		return null;
 	}
 
 	private function getHorizontalRule( string $line ) : ?HorizontalRule
