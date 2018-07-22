@@ -13,4 +13,6 @@ abstract class Element
 	public const BLOCKQUOTE         = 'blockquote';
 
 	public const HORIZONTAL_RULE    = 'horizontal rule';
+
+	public const LINE_BREAK         = 'line break';
 }

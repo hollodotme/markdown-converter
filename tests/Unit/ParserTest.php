@@ -6,6 +6,7 @@ use hollodotme\Markdown\Elements\Blockquote;
 use hollodotme\Markdown\Elements\Element;
 use hollodotme\Markdown\Elements\Header;
 use hollodotme\Markdown\Elements\HorizontalRule;
+use hollodotme\Markdown\Elements\LineBreak;
 use hollodotme\Markdown\Elements\SortedListItem;
 use hollodotme\Markdown\Elements\UnsortedListItem;
 use hollodotme\Markdown\Interfaces\ParsesMarkdown;
@@ -301,10 +302,53 @@ final class ParserTest extends TestCase
 				'line' => '---',
 			],
 			[
+				'line' => '- - -',
+			],
+			[
 				'line' => '***',
 			],
 			[
+				'line' => '* * *',
+			],
+			[
 				'line' => '___',
+			],
+			[
+				'line' => '_ _ _',
+			],
+		];
+	}
+
+	/**
+	 * @param string $line
+	 *
+	 * @throws \PHPUnit\Framework\ExpectationFailedException
+	 * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
+	 *
+	 * @dataProvider lineBreakLineProvider
+	 */
+	public function testCanGetLineBreak( string $line ) : void
+	{
+		$elements = $this->parser->getElements( $line );
+
+		$lineBreak = iterator_to_array( $elements )[0];
+
+		$this->assertInstanceOf( LineBreak::class, $lineBreak );
+		$this->assertSame( Element::LINE_BREAK, $lineBreak->getName() );
+		$this->assertFalse( $lineBreak->isMultiline() );
+	}
+
+	public function lineBreakLineProvider() : array
+	{
+		return [
+			[
+				'line' => 'Something   ',
+			],
+			[
+				'line' => '  ',
+			],
+			[
+				'line' => 'Something   ',
 			],
 		];
 	}

@@ -6,6 +6,7 @@ use Generator;
 use hollodotme\Markdown\Elements\Blockquote;
 use hollodotme\Markdown\Elements\Header;
 use hollodotme\Markdown\Elements\HorizontalRule;
+use hollodotme\Markdown\Elements\LineBreak;
 use hollodotme\Markdown\Elements\SortedListItem;
 use hollodotme\Markdown\Elements\UnsortedListItem;
 use hollodotme\Markdown\Interfaces\ParsesMarkdown;
@@ -14,6 +15,7 @@ use function array_filter;
 use function floor;
 use function preg_match;
 use function strlen;
+use function substr;
 
 final class Parser implements ParsesMarkdown
 {
@@ -27,10 +29,11 @@ final class Parser implements ParsesMarkdown
 		$elements = [];
 
 		$elements[] = $this->getHeaderElement( $line );
+		$elements[] = $this->getHorizontalRule( $line );
 		$elements[] = $this->getUnsortedListItem( $line );
 		$elements[] = $this->getSortedListItem( $line );
 		$elements[] = $this->getBlockquote( $line );
-		$elements[] = $this->getHorizontalRule( $line );
+		$elements[] = $this->getLineBreak( $line );
 
 		yield from array_values( array_filter( $elements ) );
 	}
@@ -89,11 +92,23 @@ final class Parser implements ParsesMarkdown
 
 	private function getHorizontalRule( string $line ) : ?HorizontalRule
 	{
-		if ( !preg_match( '#^\s*[-*_]{3,}\s*$#', $line ) )
+		$cleanLine = preg_replace( '#\s#', '', $line );
+
+		if ( !preg_match( '#^(\-{3,}|\*{3,}|_{3,})$#', $cleanLine ) )
 		{
 			return null;
 		}
 
 		return new HorizontalRule();
+	}
+
+	private function getLineBreak( string $line ) : ?LineBreak
+	{
+		if ( '  ' !== substr( $line, -2 ) )
+		{
+			return null;
+		}
+
+		return new LineBreak();
 	}
 }
