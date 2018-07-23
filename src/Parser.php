@@ -10,6 +10,7 @@ use hollodotme\Markdown\BlockElements\HorizontalRule;
 use hollodotme\Markdown\BlockElements\LineBreak;
 use hollodotme\Markdown\BlockElements\Quote;
 use hollodotme\Markdown\BlockElements\SortedListItem;
+use hollodotme\Markdown\BlockElements\Text;
 use hollodotme\Markdown\BlockElements\UnsortedListItem;
 use hollodotme\Markdown\Exceptions\LineMismatchException;
 use hollodotme\Markdown\Interfaces\ParsesMarkdown;
@@ -25,6 +26,7 @@ final class Parser implements ParsesMarkdown
 		Quote::class,
 		Code::class,
 		BlankLine::class,
+		Text::class,
 	];
 
 	/**

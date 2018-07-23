@@ -19,4 +19,6 @@ abstract class BlockElement
 	public const BLANK_LINE         = 'blank line';
 
 	public const CODE               = 'code';
+
+	public const TEXT               = 'text';
 }

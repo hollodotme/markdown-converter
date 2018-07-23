@@ -15,7 +15,8 @@
 - [x] Can Get Line Break (💚 3)
 - [x] Can Get Blank Line (💚 3)
 - [x] Can Get Code (💚 4)
+- [x] Can Get Text Element (💚 5)
 
 ---
 
-Report created at 2018-07-22 22:11:41 (UTC)
+Report created at 2018-07-23 21:21:50 (UTC)

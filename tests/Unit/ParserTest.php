@@ -10,6 +10,7 @@ use hollodotme\Markdown\BlockElements\HorizontalRule;
 use hollodotme\Markdown\BlockElements\LineBreak;
 use hollodotme\Markdown\BlockElements\Quote;
 use hollodotme\Markdown\BlockElements\SortedListItem;
+use hollodotme\Markdown\BlockElements\Text;
 use hollodotme\Markdown\BlockElements\UnsortedListItem;
 use hollodotme\Markdown\Interfaces\ParsesMarkdown;
 use hollodotme\Markdown\Parser;
@@ -411,6 +412,52 @@ final class ParserTest extends TestCase
 				'line'                => "\t\t{ Code; }",
 				'expectedContents'    => '{ Code; }',
 				'expectedIndentLevel' => 2,
+			],
+		];
+	}
+
+	/**
+	 * @param string $line
+	 * @param string $expectedContents
+	 *
+	 * @throws \PHPUnit\Framework\ExpectationFailedException
+	 * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
+	 *
+	 * @dataProvider textLineProvider
+	 */
+	public function testCanGetTextElement( string $line, string $expectedContents ) : void
+	{
+		$elements = $this->parser->getBlockElements( $line );
+
+		/** @var Text $text */
+		$text = iterator_to_array( $elements )[0];
+
+		$this->assertSame( BlockElement::TEXT, $text->getName() );
+		$this->assertSame( $expectedContents, $text->getContents() );
+	}
+
+	public function textLineProvider() : array
+	{
+		return [
+			[
+				'line'             => 'Some text',
+				'expectedContents' => 'Some text',
+			],
+			[
+				'line'             => ' Some text with leading whitespace',
+				'expectedContents' => 'Some text with leading whitespace',
+			],
+			[
+				'line'             => ' Some text with leading and trailing whitespace ',
+				'expectedContents' => 'Some text with leading and trailing whitespace',
+			],
+			[
+				'line'             => '-- Some text with leading dashes',
+				'expectedContents' => '-- Some text with leading dashes',
+			],
+			[
+				'line'             => '[A link](https://example.com)',
+				'expectedContents' => '[A link](https://example.com)',
 			],
 		];
 	}
